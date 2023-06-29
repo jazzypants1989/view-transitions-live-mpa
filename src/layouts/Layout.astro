@@ -26,51 +26,37 @@ const { title } = Astro.props
 </html>
 
 <script>
-  window.addEventListener("DOMContentLoaded", (event) => {
-    const videoCard = document.getElementById("videoCard")
-    const videoId = document.getElementById("videoId")
-    const cardLink = document.getElementById("cardLink")
+  window.addEventListener("DOMContentLoaded", () => {
+    const videoId = document.getElementById("videoId") as HTMLVideoElement
 
-    // Save the video's current time when the link is clicked
-    if (cardLink) {
-      console.log("cardLink", cardLink)
-      cardLink.addEventListener("click", () => {
-        if (videoCard) {
-          console.log("videoCard", videoCard.currentTime)
-          sessionStorage.setItem("videoTime", videoCard.currentTime)
-        } else if (videoId) {
-          console.log("videoId", videoId.currentTime)
-          sessionStorage.setItem("videoTime", videoId.currentTime)
-        }
-      })
+    const storedTime = sessionStorage.getItem("videoTime")
+    if (storedTime) {
+      if (videoId) {
+        videoId.currentTime = parseFloat(storedTime)
+        console.log("videoId", videoId.currentTime)
+      }
     }
 
-    // Save the video's current time when the page is unloaded
     window.addEventListener("beforeunload", () => {
       if (videoId) {
         console.log("videoId", videoId.currentTime)
-        sessionStorage.setItem("videoTime", videoId.currentTime)
-        console.log(sessionStorage.getItem("videoTime"))
-      } else if (videoCard) {
-        console.log("videoCard", videoCard.currentTime)
-        sessionStorage.setItem("videoTime", videoCard.currentTime)
+        sessionStorage.setItem("videoTime", videoId.currentTime.toString())
         console.log(sessionStorage.getItem("videoTime"))
       }
     })
+  })
+  const cards = document.querySelectorAll(".card")
 
-    // Load the video's current time when the page is loaded
-    window.addEventListener("load", () => {
-      const storedTime = sessionStorage.getItem("videoTime")
-      if (storedTime) {
-        if (videoId) {
-          console.log("videoId", videoId.currentTime)
-          videoId.currentTime = parseFloat(storedTime)
-        }
-        if (videoCard) {
-          console.log("videoCard", videoCard.currentTime)
-          videoCard.currentTime = parseFloat(storedTime)
-        }
-      }
+  cards.forEach((card) => {
+    card.addEventListener("mouseenter", () => {
+      card.classList.add("activeVT")
+      console.log("hovered")
+      console.log(card.classList)
+    })
+    card.addEventListener("mouseleave", () => {
+      card.classList.remove("activeVT")
+      console.log("left")
+      console.log(card.classList)
     })
   })
 </script>
